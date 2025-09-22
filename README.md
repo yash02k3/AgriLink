@@ -1,7 +1,3 @@
-Of course. A good README.md file is essential for any GitHub project. It explains what your project does and how to run it.
-
-Here is a complete README file for your Tractor Portal. You can copy this text, save it in a new file named README.md in your project's main folder, and then push it to GitHub.
-
 🚜 Tractor Portal - Web Application
 A full-featured web application built with Python and Flask that allows users to register, rent, and manage tractors. It includes a complete user authentication system, an admin panel, a dynamic crop guide, and a real-time chat feature for users and owners.
 
@@ -37,10 +33,9 @@ Real-time Engine: Eventlet
 To run this project locally, follow these steps:
 
 1. Clone the Repository
-Bash
-
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
+
 2. Create a requirements.txt file
 Before others can use your project, they need to know what packages to install. Create a file named requirements.txt and add the following lines to it:
 
@@ -48,24 +43,20 @@ Flask
 Flask-SocketIO
 eventlet
 werkzeug
-3. Create and Activate a Virtual Environment
-Bash
 
+3. Create and Activate a Virtual Environment
 # Create the environment
 python3 -m venv venv
-
 # Activate it (on macOS/Linux)
 source venv/bin/activate
+
+
 4. Install Dependencies
 Install all the required packages from your new requirements.txt file.
-
-Bash
-
 pip install -r requirements.txt
+
 5. Set Up the Database
 Run the setup scripts in order to create and configure your tractors.db file.
-
-Bash
 
 python3 setup_db.py
 python3 setup_users_db.py
@@ -76,30 +67,29 @@ python3 setup_chat_db.py
 python3 add_admin_column.py
 python3 add_phone_column.py
 python3 add_image_column.py
+
 6. Create an Admin User
 First, run the application, register a user for yourself, then stop the application. Then, run the promotion script.
-
-Bash
 
 # First, run the app to register a user
 python3 app.py
 
 # Then, run this script and enter the username you just created
 python3 promote_admin.py
-7. Run the Application
-Bash
 
-python3 app.py
+7. Run the Application
+
+source venv/bin/activate && python3 app.py 
+
 Open your web browser and go to http://127.0.0.1:5000.
 
-📸 Screenshots
-(Suggestion: Add screenshots of your final application here to showcase your work!)
+## 📸 Screenshots
 
-Homepage:
-![Homepage](path/to/your/screenshot.png)
+**Homepage:**
+![Homepage](screenshots/homepage.png)
 
-Tractor Listings:
-![Listings](path/to/your/screenshot.png)
+**Tractor Listings:**
+![Listings](screenshots/listings.png)
 
-Chat Interface:
-![Chat](path/to/your/screenshot.png)
+**Crop Interface:**
+![Chat](screenshots/crop.png)
