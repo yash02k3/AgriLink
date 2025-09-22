@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block title %}Chat with {{ recipient['username'] }}{% endblock %}
+
+{% block head %}
+<style>
+    /* ... (Your existing chat CSS styles go here) ... */
+    .chat-container { height: 75vh; }
+    .chat-window { display: flex; flex-direction: column; height: 100%; }
+    .chat-header { background-color: #f8f9fa; padding: 1rem; border-bottom: 1px solid #ddd; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .messages { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: #e9ecef; }
+    .message-form { padding: 15px; border-top: 1px solid #ddd; background-color: #f8f9fa;}
+    .message { margin-bottom: 15px; display: flex; align-items: flex-end; gap: 10px; max-width: 85%; }
+    .message.sent { flex-direction: row-reverse; margin-left: auto; }
+    .message.received { flex-direction: row; margin-right: auto; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: var(--primary-green); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+    .message.received .avatar { background-color: #6c757d; }
+    .bubble { padding: 10px 15px; border-radius: 18px; word-wrap: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.1); position: relative; }
+    .bubble img { max-width: 200px; border-radius: 10px; }
+    .bubble a { color: inherit; }
+    .message.sent .bubble { background-color: var(--primary-green); color: white; border-bottom-right-radius: 5px;}
+    .message.received .bubble { background-color: #fff; border: 1px solid #ddd; border-bottom-left-radius: 5px;}
+    .message-deleted { font-style: italic; color: #6c757d; }
+    .delete-btn { cursor: pointer; color: #ff4d4d; font-size: 0.8em; margin: 0 5px; display: none; }
+    .message.sent:hover .delete-btn { display: inline; }
+    #attachment-btn { cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="chat-container">
+            <div class="chat-window">
+                <div class="chat-header">
+                    <span>Chat with {{ recipient['username'] }}</span>
+                    {% if recipient_phone_number %}
+                    <a href="tel:{{ recipient_phone_number }}" class="btn btn-sm btn-outline-primary">📞 Call Owner</a>
+                    {% endif %}
+                </div>
+                <div class="messages" id="messages"></div>
+                <div class="message-form">
+                    <input type="file" id="file-input" style="display: none;">
+                    <form id="message-form" class="d-flex">
+                        <button type="button" id="attachment-btn" class="btn btn-secondary me-2">📎</button>
+                        <input type="text" id="message-input" class="form-control" placeholder="Type your message..." autocomplete="off">
+                        <button type="submit" class="btn btn-success ms-2">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = io();
+        const currentUserId = {{ session['user_id'] }};
+        const currentUsername = "{{ session['username'] }}";
+        const recipientId = {{ recipient['id'] }};
+        const recipientUsername = "{{ recipient['username'] }}";
+        const messagesContainer = document.getElementById('messages');
+        const fileInput = document.getElementById('file-input');
+        const attachmentBtn = document.getElementById('attachment-btn');
+
+        socket.emit('join', { recipient_id: recipientId });
+
+        // Trigger file input when attach button is clicked
+        attachmentBtn.addEventListener('click', () => fileInput.click());
+
+        // Handle file selection
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Upload the file to the server
+            try {
+                const response = await fetch('/upload_chat_file', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    const messageType = file.type.startsWith('image/') ? 'image' : 'file';
+                    // After upload, send the file path as a chat message
+                    socket.emit('send_message', {
+                        recipient_id: recipientId,
+                        message_type: messageType,
+                        message_text: result.filePath
+                    });
+                } else {
+                    alert('File upload failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('An error occurred during upload.');
+            }
+            fileInput.value = ''; // Reset file input
+        });
+        
+        // Handle sending a text message
+        document.getElementById('message-form').addEventListener('submit', event => {
+            event.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+            if (messageText) {
+                socket.emit('send_message', { recipient_id: recipientId, message_text: messageText, message_type: 'text' });
+                addMessageToUI({ sender_id: currentUserId, message_text: messageText, message_type: 'text', is_deleted: 0 });
+                messageInput.value = '';
+            }
+        });
+
+        // Add delete functionality
+        messagesContainer.addEventListener('click', event => {
+            if (event.target.classList.contains('delete-btn')) {
+                const messageId = event.target.dataset.messageId;
+                if (confirm('Delete this message for everyone?')) {
+                    socket.emit('delete_message', { message_id: messageId });
+                }
+            }
+        });
+
+        // Listen for all event types
+        socket.on('receive_message', data => addMessageToUI(data));
+        socket.on('chat_history', data => {
+            messagesContainer.innerHTML = '';
+            data.history.forEach(msg => addMessageToUI(msg));
+        });
+        socket.on('message_deleted', data => {
+            const messageElement = document.querySelector(`[data-message-id="${data.message_id}"]`);
+            if (messageElement) {
+                messageElement.querySelector('.bubble').innerHTML = '<span class="message-deleted">This message was deleted</span>';
+                const deleteBtn = messageElement.querySelector('.delete-btn');
+                if (deleteBtn) deleteBtn.remove();
+            }
+        });
+
+        function addMessageToUI(data) {
+            const messageDiv = document.createElement('div');
+            const type = data.sender_id === currentUserId ? 'sent' : 'received';
+            const username = type === 'sent' ? currentUsername : recipientUsername;
+            const initial = username.charAt(0).toUpperCase();
+
+            messageDiv.classList.add('message', type);
+            messageDiv.dataset.messageId = data.id;
+
+            let messageContent;
+            if (data.is_deleted) {
+                messageContent = '<span class="message-deleted">This message was deleted</span>';
+            } else {
+                const sanitizedText = data.message_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                if (data.message_type === 'image') {
+                    messageContent = `<a href="${sanitizedText}" target="_blank"><img src="${sanitizedText}" alt="Shared image"></a>`;
+                } else if (data.message_type === 'file') {
+                    const filename = sanitizedText.split('/').pop();
+                    messageContent = `📎 <a href="${sanitizedText}" target="_blank">${filename}</a>`;
+                } else {
+                    messageContent = sanitizedText;
+                }
+            }
+            
+            const deleteIcon = (type === 'sent' && !data.is_deleted) ? `<span class="delete-btn" data-message-id="${data.id}">🗑️</span>` : '';
+            messageDiv.innerHTML = `<div class="avatar">${initial}</div><div class="bubble">${messageContent}</div>${deleteIcon}`;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}

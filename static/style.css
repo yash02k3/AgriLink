@@ -1,0 +1,219 @@
+/* General Body Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa; /* Light grey background */
+    color: #333;
+}
+
+/* Navbar specific styling */
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem; /* Slightly larger brand text */
+}
+
+.navbar-nav .nav-link {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85) !important;
+    transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #fff !important;
+}
+
+/* Hero Section */
+/* Inside static/style.css */
+
+.hero-section {
+    height: 60vh;
+    /* This is the critical line that loads the image */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(65, 60, 60, 0.5)), url('/static/tractor_hero.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+.hero-section h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 3.5rem; /* Larger, more impactful heading */
+    margin-bottom: 1rem;
+}
+
+.hero-section p.lead {
+    font-size: 1.5rem; /* Larger lead text */
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+}
+
+/* Custom Buttons for Hero Section */
+.custom-btn-primary {
+    background-color: #007bff; /* Bootstrap primary blue */
+    border-color: #007bff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    padding: 0.8rem 2.5rem;
+    font-size: 1.2rem;
+    border-radius: 50px; /* Pill-shaped button */
+    transition: all 0.3s ease;
+}
+
+.custom-btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-btn-success {
+    background-color: #28a745; /* Bootstrap success green */
+    border-color: #28a745;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    padding: 0.8rem 2.5rem;
+    font-size: 1.2rem;
+    border-radius: 50px; /* Pill-shaped button */
+    transition: all 0.3s ease;
+}
+
+.custom-btn-success:hover {
+    background-color: #218838;
+    border-color: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Feature Cards */
+.feature-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.feature-card i {
+    color: #28a745; /* Green icons */
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    .hero-section p.lead {
+        font-size: 1.2rem;
+    }
+    .custom-btn-primary, .custom-btn-success {
+        padding: 0.6rem 2rem;
+        font-size: 1rem;
+    }
+}
+/* =================================
+   CHAT STYLES
+   ================================= */
+.chat-container { 
+    height: 75vh; 
+}
+.chat-window { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+}
+.chat-header { 
+    background-color: #f8f9fa; 
+    padding: 1rem; 
+    border-bottom: 1px solid #ddd; 
+    font-weight: bold; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.messages { 
+    flex-grow: 1; 
+    padding: 20px; 
+    overflow-y: auto;
+    /* This loads your background image with a white overlay for readability */
+    background-image: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('/static/chat_bg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+.message-form { 
+    padding: 15px; 
+    border-top: 1px solid #ddd; 
+    background-color: #f8f9fa;
+}
+.message { 
+    margin-bottom: 15px; 
+    display: flex; 
+    align-items: flex-end; 
+    gap: 10px; 
+    max-width: 85%; 
+}
+.message.sent { 
+    flex-direction: row-reverse; 
+    margin-left: auto; 
+}
+.message.received { 
+    flex-direction: row; 
+    margin-right: auto; 
+}
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.message.received .avatar { 
+    background-color: #6c757d; 
+}
+.bubble { 
+    padding: 10px 15px; 
+    border-radius: 18px; 
+    word-wrap: break-word; 
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+    position: relative;
+    text-shadow: none; /* Fixes any blurriness */
+}
+.message.sent .bubble { 
+    background-color: var(--primary-green); 
+    color: white; 
+    border-bottom-right-radius: 5px;
+}
+.message.received .bubble { 
+    background-color: #fff; 
+    border: 1px solid #ddd; 
+    border-bottom-left-radius: 5px;
+}
+.message-deleted { 
+    font-style: italic; 
+    color: #6c757d; 
+}
+.delete-btn { 
+    cursor: pointer; 
+    color: #ff4d4d; 
+    font-size: 0.8em; 
+    margin: 0 5px; 
+    display: none; 
+}
+.message.sent:hover .delete-btn { 
+    display: inline; 
+}

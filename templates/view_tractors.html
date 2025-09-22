@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}All Tractors{% endblock %}
+
+{% block content %}
+<h2 class="text-center mb-4">All Registered Tractors</h2>
+
+<form method="GET" action="{{ url_for('view_tractors') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Search by location or model..." value="{{ search_query or '' }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+
+<div class="row">
+    {% for tractor in tractors %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <a href="{{ url_for('tractor_detail', id=tractor['id']) }}">
+                {% if tractor['image_filename'] %}
+                    <img src="{{ url_for('static', filename='uploads/' + tractor['image_filename']) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ tractor['model'] }}">
+                {% endif %}
+            </a>
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">
+                    <a href="{{ url_for('tractor_detail', id=tractor['id']) }}" class="text-decoration-none text-dark">{{ tractor['model'] }}</a>
+                </h5>
+                <div class="mb-2">
+                    {% set rounded_rating = tractor['avg_rating'] | round | int %}
+                    {% for i in range(rounded_rating) %}<span style="color: #FFD700;">★</span>{% endfor %}{% for i in range(5 - rounded_rating) %}<span style="color: #e0e0e0;">★</span>{% endfor %}
+                    <span class="ms-1 text-muted small">({{ tractor['review_count'] }} reviews)</span>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">Owner: {{ tractor['name'] }}</h6>
+                <p class="card-text"><strong>Rent/Day:</strong> ₹{{ tractor['rent'] }}</p>
+                <p class="card-text"><strong>Location:</strong> {{ tractor['location'] }}</p>
+                <p class="card-text"><strong>Phone:</strong> {{ tractor['phone'] }}</p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-auto">
+    {% if session.get('user_id') == tractor['user_id'] %}
+        <a href="{{ url_for('edit_tractor', id=tractor['id']) }}" class="btn btn-primary btn-sm flex-grow-1">Edit ✏️</a>
+        <form action="{{ url_for('delete_tractor', id=tractor['id']) }}" method="POST" class="flex-grow-1">
+            <button type="submit" class="btn btn-danger btn-sm w-100" onclick="return confirm('Are you sure?');">
+                Delete 🗑️
+            </button>
+        </form>
+    {% else %}
+        <a href="{{ url_for('tractor_detail', id=tractor['id']) }}" class="btn btn-success btn-sm w-100">View & Book</a>
+    {% endif %}
+</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="text-center mt-4">
+    <a href="/" class="btn btn-secondary">Back to Home</a>
+</div>
+{% endblock %}

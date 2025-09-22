@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Crop & Equipment Guide{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🌾 Crop & Tractor Equipment Guide</h2>
+    <p class="text-center text-muted mb-5">A guide to major crops and the equipment used for their cultivation in different regions.</p>
+
+    <div class="row">
+        {% for crop in crops %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if crop['image_filename'] %}
+                    <img src="{{ url_for('static', filename='crop_images/' + crop['image_filename']) }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ crop['crop_name'] }}">
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ crop['crop_name'] }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted"><strong>Season:</strong> {{ crop['season'] }}</h6>
+                    
+                    <p class="card-text"><strong>Primary Regions:</strong><br>{{ crop['location'] }}</p>
+                    
+                    <p class="card-text">{{ crop['description'] }}</p>
+                    <p class="card-text"><strong>Required Equipment:</strong><br>{{ crop['equipment'] }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

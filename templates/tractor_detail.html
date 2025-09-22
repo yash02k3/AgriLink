@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ tractor['model'] }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-7">
+            {% if tractor['image_filename'] %}
+                <img src="{{ url_for('static', filename='uploads/' + tractor['image_filename']) }}" class="img-fluid rounded shadow-lg" alt="{{ tractor['model'] }}">
+            {% else %}
+                <div class="bg-light rounded shadow-lg d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <p class="text-muted">No Image Available</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- START OF UPDATED RIGHT COLUMN -->
+        <div class="col-md-5">
+            <h2 class="fw-bold">{{ tractor['model'] }}</h2>
+            <p class="text-muted">Owned by: {{ tractor['name'] }}</p>
+            <hr>
+            <h3 class="fw-bold">₹{{ tractor['rent'] }} <span class="fs-5 text-muted fw-normal">/ Day</span></h3>
+            <p class="mt-3"><strong>Location:</strong> {{ tractor['location'] }}</p>
+            <p><strong>Contact:</strong> {{ tractor['phone'] }}</p>
+
+            <div class="card bg-light mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Book This Tractor</h5>
+                    <form action="{{ url_for('book_tractor', id=tractor['id']) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="start_date" class="form-label">Start Date</label>
+                            <input type="date" name="start_date" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="end_date" class="form-label">End Date</label>
+                            <input type="date" name="end_date" class="form-control" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">Submit Booking Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h5>Currently Booked Dates:</h5>
+                {% if bookings %}
+                    <ul class="list-group">
+                    {% for booking in bookings %}
+                        <li class="list-group-item">{{ booking['start_date'] }} to {{ booking['end_date'] }}</li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">This tractor has no upcoming bookings.</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- END OF UPDATED RIGHT COLUMN -->
+
+    </div>
+
+    <hr class="my-5">
+
+    <div id="reviews">
+        <h3>Leave a Review</h3>
+
+        {% if session['user_id'] %}
+        <div class="card my-4 shadow-sm">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Your Rating</label>
+                        <select name="rating" id="rating" class="form-select" required>
+                            <option value="">Choose a rating...</option>
+                            <option value="5">★★★★★ (Excellent)</option>
+                            <option value="4">★★★★☆ (Good)</option>
+                            <option value="3">★★★☆☆ (Average)</option>
+                            <option value="2">★★☆☆☆ (Fair)</option>
+                            <option value="1">★☆☆☆☆ (Poor)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Your Comment</label>
+                        <textarea name="comment" id="comment" rows="3" class="form-control" placeholder="Tell others about your experience..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit Review</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            You must <a href="{{ url_for('login') }}">log in</a> to leave a review.
+        </div>
+        {% endif %}
+
+        <h4 class="mt-5">All Reviews ({{ reviews|length }})</h4>
+
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review['username'] }}</h5>
+                    <h6 class="card-subtitle mb-2">
+                        {% for i in range(review['rating']) %}
+                            <span style="color: #FFD700;">★</span>
+                        {% endfor %}
+                        {% for i in range(5 - review['rating']) %}
+                            <span style="color: #e0e0e0;">★</span>
+                        {% endfor %}
+                    </h6>
+                    <p class="card-text">{{ review['comment'] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>There are no reviews for this tractor yet. Be the first to leave one!</p>
+        {% endif %}
+    </div>
+</div>
+<!-- Inside templates/tractor_detail.html -->
+<div class="card bg-light mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Book This Tractor</h5>
+        <form action="{{ url_for('book_tractor', id=tractor['id']) }}" method="POST">
+            <!-- ... your date input fields ... -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">Submit Booking Request</button>
+            </div>
+        </form>
+        <!-- NEW: Add the cancellation policy text -->
+        <p class="small text-muted mt-2 text-center">
+            Note: Bookings can be cancelled for a full refund up to 48 hours before the start date.
+        </p>
+    </div>
+</div>
+{% endblock %}

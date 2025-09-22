@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <h1 class="display-4">The Future of Farming is Here</h1>
+    <p class="lead">Rent, manage, and find the perfect tractor for your needs. All in one place.</p>
+    <div class="mt-4">
+        {% if session['username'] %}
+            <a class="btn btn-primary btn-lg custom-btn-primary" href="{{ url_for('view_tractors') }}" role="button">Browse Tractors</a>
+        {% else %}
+            <a class="btn btn-success btn-lg custom-btn-success" href="{{ url_for('register_user') }}" role="button">Get Started</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container text-center py-5">
+    <h2 class="mb-4">Our Features</h2>
+    <p class="text-muted fs-5">Everything you need, right at your fingertips. Discover how we can help you revolutionize your farming operations.</p>
+    <div class="row text-center mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 rounded shadow-sm h-100">
+                <i class="fas fa-tractor fa-3x mb-3 text-success"></i>
+                <h3 class="h5 mb-2">Wide Selection</h3>
+                <p>Access a diverse fleet of tractors, from compact models to heavy-duty machines.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 rounded shadow-sm h-100">
+                <i class="fas fa-tools fa-3x mb-3 text-success"></i>
+                <h3 class="h5 mb-2">Easy Management</h3>
+                <p>Streamline your equipment rental and management with our intuitive platform.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="feature-card p-4 rounded shadow-sm h-100">
+                <i class="fas fa-chart-line fa-3x mb-3 text-success"></i>
+                <h3 class="h5 mb-2">Optimize Productivity</h3>
+                <p>Enhance efficiency and maximize your output with reliable, on-demand machinery.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

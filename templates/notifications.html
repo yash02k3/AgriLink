@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Notifications{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">Your Notifications</h2>
+
+    {% if notifications %}
+        <ul class="list-group">
+            {% for notification in notifications %}
+            <li class="list-group-item">
+                <p class="mb-1">{{ notification['message'] }}</p>
+                <small class="text-muted">{{ notification['created_at'].split(' ')[0] }}</small>
+                <a href="{{ notification['link'] }}" class="btn btn-sm btn-outline-primary float-end">View Details</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info text-center">
+            You have no notifications.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

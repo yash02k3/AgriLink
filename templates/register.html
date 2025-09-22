@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Register Tractor{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="text-center mb-4">Register a New Tractor</h2>
+    <div class="card p-4 shadow-sm">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="name" class="form-label">Owner Name</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="model" class="form-label">Tractor Model</label>
+                <input type="text" id="model" name="model" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="rent" class="form-label">Rent per Day (₹)</label>
+                <input type="number" id="rent" name="rent" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" id="location" name="location" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Owner Phone Number</label>
+                <input type="tel" id="phone" name="phone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Tractor Image</label>
+                <input type="file" id="image" name="image" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Register Tractor</button>
+        </form>
+    </div>
+    <div class="text-center mt-3">
+        <a href="{{ url_for('view_tractors') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+</div>
+{% endblock %}
